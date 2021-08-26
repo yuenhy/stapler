@@ -3,10 +3,11 @@ import pandas as pd
 
 # parse prompt format
 def parse_format(row, prompt_format):
-    prompt = ""
+    prompt = []
     final_format = ""
     text = None
     formatting = None
+
     for f in prompt_format.split("-"):
         col, fix = f.split("_")
         # valid_columns = ["author", "bd", "year", "technique", "location", "form", "type", "school"]
@@ -34,14 +35,14 @@ def parse_format(row, prompt_format):
         elif col == "school":
             text, formatting = get_school_format(fix, row.SCHOOL)
         else:
-            print(col, fix)
             raise Exception("check grammar")
-        
+        if text is None:
+            raise Exception(col, fix)
         if not text is None and not text == "other":
-            prompt = f"{prompt} {text}"
+            prompt.append(text.strip())
             final_format = f"{final_format}-{formatting}"
-    
-    return prompt.strip(), final_format[1:]
+
+    return prompt, final_format[1:]
 
 def export_list(prompt_list, filename):
     print("saved to", filename)

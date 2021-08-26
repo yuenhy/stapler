@@ -1,9 +1,10 @@
 import random
 from .grammar import valid_columns, valid_grammar, extra
+
 # random select one from list
 def format_sampler(x):
-    k = random.randrange(len(x))
-    return x[k]
+    k = random.sample(x, 1)
+    return k[0]
 
 def get_author_format(fix, data):
     prefix = ["in_style_of", "by"]
@@ -33,8 +34,8 @@ def get_author_format(fix, data):
         name = data.split(" ")
         text = ""
         for part in name:                       # ARCANGELO DI JACOPO DEL SELLAIO -> Arcangelo Di Jacopo Del Sellaio
-            text += part[1] + part[1:].lower()  # REMBRANDT Harmenszoon van Rijn -> Rembrandt Harmenszoon van Rijn
-
+            text += str(part[0]) + str(part[1:]).lower() + " "  # REMBRANDT Harmenszoon van Rijn -> Rembrandt Harmenszoon van Rijn
+        text.strip()
     if fix == "nf":
         selected_fix = format_sampler(nofix)
     elif fix == "pf":
@@ -83,6 +84,7 @@ def get_year_format(fix, data):
 
     if fix == "nf":
         selected_fix = f"{format_sampler(nofix)}"
+        text = year
     elif fix == "pf":
         selected_fix = f"{format_sampler(prefix)}"
         text = f"{selected_fix} {year}"
@@ -235,14 +237,14 @@ def get_prompt_format(use_custom=False):
 
     if not use_custom:
         # use extra stuff or no
-        k = random.randint(1, len(extra))
+        k = random.randint(0, len(extra))
         selected_format = format_sampler(valid_grammar)
         if "any" in selected_format:
             selected_format = selected_format.replace("any", format_sampler(valid_columns))
         if k < len(extra):
             selected_extra = extra[k]
             if not selected_extra.split("_")[0] in selected_format:
-                selected_format =f"{selected_format}-{selected_extra}"
+                selected_format = f"{selected_format}-{selected_extra}"
 
     return selected_format
 
