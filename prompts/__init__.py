@@ -1,0 +1,1 @@
+from .generator import make_prompts
