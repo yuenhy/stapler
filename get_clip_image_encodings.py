@@ -35,7 +35,7 @@ for i in tqdm(range(len(folder))):
 
 
     with h5py.File(str(filepath), "w") as f:
-        f.create_dataset("encoding", data=image_features)
+        f.create_dataset("encoding", data=image_features.cpu())
 
 
 # folder = list(output_folder.glob("*.hdf5"))
