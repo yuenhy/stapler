@@ -18,15 +18,28 @@ valid_grammar = [
     "school_nf-type_nf-form_nf-author_pf", # german mythological painting by zwirner
     "school_nf-type_nf-form_nf-author_pf-year_af", # german mythological painting by zwirner (1839)
     "school_nf-type_nf-form_nf-author_pf-year_af-bd_nf", # german mythological painting by zwirner (b. 1802, Jakobswalde, d. 1861, Köln)
-    # "any_nf", # any one 
+    # # "any_nf", # any one 
+    "school_nf-cusz_color-type_nf-form_nf-author_pf-year_af-cusz_type", 
+    # "cusz_0-year_nf-form_nf-cusz_0" # a photo of a 1700 painting in 8K ULTRA HD 
 ]
 
 # extra stuff to possibly attach to valid grammar
 # add to valid_grammar to force 
-# will not repeat if column item exists in prompt
+# will not repeat if column item exists in prompt e.g. invalid_grammer = ["year_nf-form_nf-year_nf"]
 extra = ["year_af", "location_pf"]
-# e.g.
-# "school-nf_form-nf-location-pf", # italian architecture from boboli gardens
-# "type-nf-form_nf-location-pf", # religious sculpture from kunsthistorisches museum
-# "school-nf_type-nf-form_nf-location-pf", # german mythological painting in the hermitage
+# "school_nf-form_nf-location_pf", # italian architecture from boboli gardens
+# "type_nf-form_nf-location_pf", # religious sculpture from kunsthistorisches museum
+# "school_nf-type_nf-form_nf-location_pf", # german mythological painting in the hermitage
 # "school_nf-type_nf-form_nf-author_pf-year_af", # german mythological painting by zwirner (1839)
+
+#########################################
+# check custom_strings.py for examples
+custom_flag = "cusz"
+# use cus_x when writing valid grammar to specify a list
+
+# check custom_strings.py for examples
+change_axis = True
+# False, horizontal 
+# x y if [x, y]
+# True, vertical
+# x k if [x, y] [j, k]

@@ -1,10 +1,42 @@
 import random
-from .grammar import valid_columns, valid_grammar, extra
+from .grammar import *
+from .custom_strings import *
 
 # random select one from list
 def format_sampler(x):
     k = random.sample(x, 1)
     return k[0]
+
+def get_custom_vertical(data):
+    text = format_sampler(data)
+    return text
+
+def get_custom_horizontal(counter, data):
+    if counter >= len(data):
+        return None
+    text = data[counter]
+    return text
+
+def get_custom_format(counter, f, data, prompt_format):
+    text = None
+    try:
+        if f == custom_flag:
+            # randomized data
+            text = get_custom_horizontal(counter, data)
+        else:
+            custom = eval(f)
+            if change_axis:
+                text = get_custom_vertical(custom)
+            else:
+                text = get_custom_horizontal(counter, custom)
+                if text is None:
+                    raise Exception(f"{f} has {len(custom)} value(s) but you specified at least {counter+1} flags in {prompt_format}")
+    except NameError as e:
+        raise Exception(f"{f} not in custom_strings.py")
+    
+    formatting = f
+    return text, formatting, counter + 1
+
 
 def get_author_format(fix, data):
     prefix = ["in_style_of", "by"]
@@ -239,12 +271,13 @@ def get_prompt_format(use_custom=False):
         # use extra stuff or no
         k = random.randint(0, len(extra))
         selected_format = format_sampler(valid_grammar)
-        if "any" in selected_format:
-            selected_format = selected_format.replace("any", format_sampler(valid_columns))
+        if "any_" in selected_format:
+            selected_format = selected_format.replace("any_", f"{format_sampler(valid_columns)}_")
         if k < len(extra):
             selected_extra = extra[k]
             if not selected_extra.split("_")[0] in selected_format:
                 selected_format = f"{selected_format}-{selected_extra}"
+
 
     return selected_format
 
