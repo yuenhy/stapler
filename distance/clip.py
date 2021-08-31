@@ -46,13 +46,13 @@ def generate_clip_score(device, img, text):
   probs = calculate_prob(image_features, text_features)
   return probs
 
-def get_image_encoding(img):
+def get_image_encoding(img, folder="encoding"):
   device = "cuda" if torch.cuda.is_available() else "cpu"
-  output_folder = Path("encoding")
+  output_folder = Path(folder)
   model, preprocess = clip.load("ViT-B/32", device=device)
   image = preprocess(Image.open(img)).unsqueeze(0).to(device)
   filename = Path(img).stem
-  filepath = output_folder.joinpath(f"{filename.stem}.hdf5")
+  filepath = output_folder.joinpath(f"{filename}.hdf5")
   with torch.no_grad():
     image_features = model.encode_image(image)
   with h5py.File(str(filepath), "w") as f:
