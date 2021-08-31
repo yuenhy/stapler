@@ -53,8 +53,6 @@ def parse_format(row, prompt_format):
         if custom_random and change_axis:
             raise Exception("vertical custom sampling requires a specified list, check change_axis in grammar.py")        
 
-
-        # valid_columns = ["author", "bd", "year", "technique", "location", "form", "type", "school"]
         if col == "author":
             text, formatting = get_author_format(fix, data["author"])
         elif col == "bd":
@@ -81,6 +79,7 @@ def parse_format(row, prompt_format):
             raise Exception(f"{f} not recognized, check grammar")
 
         if text is None:
+            # e.g. school_pf, but prefix is not declared
             raise Exception(f"{f} not recognized, check formats")
 
         if not text is None and not text == "other":
@@ -106,8 +105,12 @@ def get_prompt_ref_list(df, pp, runs, filename):
 
     for row in df.itertuples():
         for i in range(pp):
-            prompt_format = get_prompt_format()
+            j = i
+            prompt_format = get_prompt_format(j) # use valid_grammar sequentially and wrap around
+            # prompt_format = get_prompt_format() # random sample with replacement
+
             prompt, final_format = parse_format(row, prompt_format)
+            # https://www.wga.hu/html_m/l/le_brun/1versail/6other1.html -> le_brun_1versail_6other1.jpg
             reference_img = "_".join(row.URL.split("/")[5:]).replace("html", "jpg")
             unique_prompts.append(prompt)
             for j in range(runs):

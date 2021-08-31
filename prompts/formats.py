@@ -7,6 +7,11 @@ def format_sampler(x):
     k = random.sample(x, 1)
     return k[0]
 
+def format_indexer(x, i):
+    k = i % len(x)
+    return x[k]
+    
+
 def get_custom_vertical(data):
     # random select one from list
     text = format_sampler(data)
@@ -266,20 +271,22 @@ def get_school_format(fix, data):
     
     return text, formatting
 
-def get_prompt_format(use_custom=False):
-    #TODO: use_custom
-    # year is DATE or TIMEFRAME
-
-    if not use_custom:
-        # use extra stuff or no
-        k = random.randint(0, len(extra))
+def get_prompt_format(wo_replace=False):
+    selected_format = None
+    k = len(extra) + 1
+    # randomize if to use `extra` stuff in grammar or no
+    # k = random.randint(0, len(extra))
+    if wo_replace:
         selected_format = format_sampler(valid_grammar)
-        if "any_" in selected_format:
-            selected_format = selected_format.replace("any_", f"{format_sampler(valid_columns)}_")
-        if k < len(extra):
-            selected_extra = extra[k]
-            if not selected_extra.split("_")[0] in selected_format:
-                selected_format = f"{selected_format}-{selected_extra}"
+    else:
+        selected_format = format_indexer(valid_grammar, wo_replace)
+    if "any_" in selected_format:
+        # valid_columns is in grammar.py
+        selected_format = selected_format.replace("any_", f"{format_sampler(valid_columns)}_")
+    if k < len(extra):
+        selected_extra = extra[k]
+        if not selected_extra.split("_")[0] in selected_format:
+            selected_format = f"{selected_format}-{selected_extra}"
 
 
     return selected_format
