@@ -21,15 +21,11 @@ $ dream "the edge of human" --save_dir secret_experiment
 
 [Saving and Restoring Latents](https://github.com/yuenhy/big-sleep#saving-and-restoring-latents)
 
-Saves `inital`izing latent or as per `save_every`. Defaults to False
+Saves `initial`izing latent or as per `save_every`. Defaults to False
 
 ```bash
 $ dream 'androids dreaming of electric sleep' --save_latents initial|True
 ```
-
-Latents will be saved under `latents` wherever the command is invoked.
-
-You can specify the parent directory with `--save_dir`.
 
 Restores latents and resets optimizer.
 
@@ -48,6 +44,7 @@ tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
 ```
 # colab
 some examples [here](https://colab.research.google.com/drive/1S4z9yKZjL1OYPfJlYdLKP5c5xb6t2M0u)
+slurm script [here](https://gist.github.com/yuenhy/068ac13ae872b76d7d15b6bbde96c082)
 
 # distance functions
 measure distance between the original image and the generated image

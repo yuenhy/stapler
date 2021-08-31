@@ -8,10 +8,12 @@ def format_sampler(x):
     return k[0]
 
 def get_custom_vertical(data):
+    # random select one from list
     text = format_sampler(data)
     return text
 
 def get_custom_horizontal(counter, data):
+    # select by position index
     if counter >= len(data):
         return None
     text = data[counter]
@@ -24,6 +26,7 @@ def get_custom_format(counter, f, data, prompt_format):
             # randomized data
             text = get_custom_horizontal(counter, data)
         else:
+            # get list from grammar.py
             custom = eval(f)
             if change_axis:
                 text = get_custom_vertical(custom)

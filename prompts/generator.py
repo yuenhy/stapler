@@ -8,14 +8,17 @@ def parse_format(row, prompt_format):
     text = None
     formatting = None
 
+    # check if custom flag is specified correctly
     custom_count = prompt_format.count(custom_flag)
     specified_count = prompt_format.count(f"{custom_flag}_")
     if specified_count > 0 and custom_count + specified_count > specified_count * 2:
         raise Exception(f"inconsistent flag use in {prompt_format}")
 
+    # counter for indexing in horizontal fill
     custom_counter = 0
     custom_random = False
     custom_data = []
+    # for randomization
     if custom_count in custom_all_strings:
         custom_data = format_sampler(custom_all_strings[custom_count])
 
@@ -73,6 +76,7 @@ def parse_format(row, prompt_format):
             raise Exception(f"{f} not recognized, check formats")
 
         if not text is None and not text == "other":
+            # return prompt in list format
             prompt.append(text.strip())
             final_format = f"{final_format}-{formatting}"
 
