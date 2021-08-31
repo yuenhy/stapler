@@ -106,7 +106,7 @@ def get_year_format(fix, data):
     prefix = ["in", "around"]
     afix = ["parenthesis"]
     nofix = ["no_extra"]
-    #TODO: change this if not a wga catalogue
+    #change this as required
     types = ["timeframe", "date"]
 
     formatting = f"{format_sampler(types)}"

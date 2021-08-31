@@ -1,24 +1,25 @@
 from .grammar import custom_flag
 #####################################################################
-# custom_flag = "cus" change this in grammar.py
-# if change_axis == False
+# horizontal fill
+# change_axis == False
 #
-# "cus_0-year_nf-form_nf-cus_0" will check for cus_0, and greedily inject from cus_0
+# "cusz_0-year_nf-form_nf-cusz_0" will check for cus_0, and greedily inject from cus_0
 # a photo of a 1700 painting in 8K ULTRA HD
 #
-# `cus` without additional specification
-# "cus-year_nf-form_nf" will check for any cus_x, where len(cus_x) == number of custom flags found in format
+# `cusz` without additional specification
+#
+# "cusz-year_nf-form_nf" will check for any cus_x, where len(cus_x) == number of custom flags found in format
 # format.count(custom_flag) == 1, so cus_1a OR cus_1b 
 # a zipped file of a 1700 painting OR the non-compressed version of a 1700 painting
 # 
 #####################################################################
-# custom_flag = "cus" change this in grammar.py
-# if change_axis == True
+# vertical fill
+# change_axis == True
 #
 # "year_nf-cus_colors-form_nf-cus_types" will sample and inject from cus_colors and cus_4 accordingly
 # 1700 blue painting BDR
 #
-# `cus` not allowed
+# `cusz` not allowed
 #####################################################################
 
 # avoid using <custom_flag> in list name
@@ -31,12 +32,10 @@ cusz_type = ["BDR", "WEB-DL", "CAM-Rip"]
 
 
 
-
 #####################################################################
 custom_all_strings = {} # if renaming, update generator.py > parse_format() as well
 for name in dir():
     if not name.startswith('__'):
-    # if not name.startswith('__') and type(name) == list:
         actual = eval(name)
         if type(actual) is list:
             if name == custom_flag:

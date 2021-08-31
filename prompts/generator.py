@@ -90,6 +90,8 @@ def get_prompt_ref_list(df, pp, runs, filename):
     prompt_list = []
     unique_prompts = []
 
+    latent_file_ext = "pkl"
+
     for row in df.itertuples():
         for i in range(pp):
             prompt_format = get_prompt_format()
@@ -97,7 +99,7 @@ def get_prompt_ref_list(df, pp, runs, filename):
             reference_img = "_".join(row.URL.split("/")[5:]).replace("html", "jpg")
             unique_prompts.append(prompt)
             for j in range(runs):
-                start_latent = f"{row.ID}-{j}.backup"
+                start_latent = f"{row.ID}-{j}.{latent_file_ext}"
                 generated_img = f"{row.ID}-{i}-{j}.png"
                 #columns=["REF_ID", "PROMPT", "PROMPT_FORMAT", "START_LATENT", "GENERATED_IMG", "REFERENCE_IMG"]
                 prompt_list.append([row.ID, prompt, final_format, start_latent, generated_img, reference_img])
@@ -127,12 +129,10 @@ def make_prompts(csv, filename=None, aw=50, pp=5, runs=5):
     if aw in custom:
         print("found custom group")
         for i in custom[aw]:
-            df_artist = df[df.AUTHOR == custom[aw]]
+            df_artist = df[df.AUTHOR.isin(custom[aw])]
             if len(df_artist) > max_pieces:
                 df_artist = df_artist.sample(max_pieces)
         df_sampled = df_sampled.append(df_artist)
-
-        # df_sampled = df[df.AUTHOR.isin(custom[aw])]
     elif aw:
         df_sampled = df.sample(int(aw))
  
