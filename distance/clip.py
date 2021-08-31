@@ -46,6 +46,7 @@ def generate_clip_score(device, img, text):
     probs = calculate_prob(image_features, text_features)
   return probs
 
+# encodes image
 def get_image_encoding(img, folder="encoding"):
   device = "cuda" if torch.cuda.is_available() else "cpu"
   output_folder = Path(folder)
@@ -61,37 +62,27 @@ def get_image_encoding(img, folder="encoding"):
 
 # load image features from file, encode text
 def get_clip_score(encoded_img, text):
-
   device = "cuda" if torch.cuda.is_available() else "cpu"
   model, _ = clip.load("ViT-B/32", device=device)
-  
   with h5py.File(str(encoded_img), 'r') as hf:
     image_features = hf["encoding"][:]
-
   with torch.no_grad():
     text_features = model.encode_text(text)
     probs = calculate_prob(image_features, text_features)
-  
   return probs
 
 def score_by_clip(original_imgs, generated_imgs, prompts, original_encodings=False):
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
-
     probs = []
     distances = []
-
     for i in tqdm(range(len(generated_imgs))):
-
         model, preprocess = clip.load("ViT-B/32", device=device)
         text = clip.tokenize(prompts[i]).to(device)
-        
         original_prob = []
         if original_encodings: # existing encodings
           original_prob = get_clip_score(device, original_encodings[i], text).tolist()[0]
         else: # no existing encoding, get fresh encoding
           original_prob = generate_clip_score(device, original_imgs[i], text).tolist()[0]
-
         probs.append(original_prob)
 
         ##############################
