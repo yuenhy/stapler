@@ -43,12 +43,13 @@ def generate_clip_score(device, img, text):
   with torch.no_grad():
     image_features = model.encode_image(image)
     text_features = model.encode_text(text)
-  probs = calculate_prob(image_features, text_features)
+    probs = calculate_prob(image_features, text_features)
   return probs
 
 def get_image_encoding(img, folder="encoding"):
   device = "cuda" if torch.cuda.is_available() else "cpu"
   output_folder = Path(folder)
+  output_folder.mkdir(parents=True, exist_ok=True)
   model, preprocess = clip.load("ViT-B/32", device=device)
   image = preprocess(Image.open(img)).unsqueeze(0).to(device)
   filename = Path(img).stem
@@ -67,8 +68,7 @@ def get_clip_score(device, encoded_img, text):
 
   with torch.no_grad():
     text_features = model.encode_text(text)
-
-  probs = calculate_prob(image_features, text_features)
+    probs = calculate_prob(image_features, text_features)
   
   return probs
     
