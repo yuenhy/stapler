@@ -32,7 +32,7 @@ def calculate_logits(image_features, text_features):
   return logits_per_image, logits_per_text
 
 def calculate_prob(image_features, text_features):
-  logits_per_image, logits_per_text = calculate_logits(image_features, text_features)
+  logits_per_image, _ = calculate_logits(image_features, text_features)
   probs = logits_per_image.softmax(dim=-1).cpu().numpy()
   return probs
 
@@ -57,10 +57,12 @@ def get_image_encoding(img, folder="encoding"):
   with torch.no_grad():
     image_features = model.encode_image(image)
   with h5py.File(str(filepath), "w") as f:
-    f.create_dataset("encoding", data=image_features.cpu())
+    f.create_dataset("encoding", image_features.cpu())
 
 # load image features from file, encode text
-def get_clip_score(device, encoded_img, text):
+def get_clip_score(encoded_img, text):
+
+  device = "cuda" if torch.cuda.is_available() else "cpu"
   model, _ = clip.load("ViT-B/32", device=device)
   
   with h5py.File(str(encoded_img), 'r') as hf:
@@ -71,25 +73,33 @@ def get_clip_score(device, encoded_img, text):
     probs = calculate_prob(image_features, text_features)
   
   return probs
-    
 
 def score_by_clip(original_imgs, generated_imgs, prompts, original_encodings=False):
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     probs = []
+    distances = []
 
     for i in tqdm(range(len(generated_imgs))):
 
         model, preprocess = clip.load("ViT-B/32", device=device)
         text = clip.tokenize(prompts[i]).to(device)
-        prob = 0
-
+        
+        original_prob = []
         if original_encodings: # existing encodings
-          prob = get_clip_score(device, original_encodings[i], text).tolist()[0]
+          original_prob = get_clip_score(device, original_encodings[i], text).tolist()[0]
         else: # no existing encoding, get fresh encoding
-          prob = generate_clip_score(device, generated_imgs[i], text).tolist()[0]
+          original_prob = generate_clip_score(device, original_imgs[i], text).tolist()[0]
 
-        probs.append(prob)
+        probs.append(original_prob)
 
-    return probs
+        ##############################
+        # # uncomment when doing distance calculation
+        # prob = generate_clip_score(device, generated_imgs[i], text).tolist()[0]
+        # distance = measure_distance(original_prob, prob)
+        # distances.append(distance)
+    # return distances 
+    ####################################
+
+    return probs 

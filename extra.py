@@ -16,7 +16,11 @@ def convert_to_df(original_imgs, generated_imgs, distances, method="correlation"
         "distance":distances
     }
     df = pd.DataFrame(data=d)
-    df = df.sort_values(["original_img", "distance"], ascending=[True, ascending])
+    try:
+        df = df.sort_values(["original_img", "distance"], ascending=[True, ascending])
+    except Exception as e:
+        # TODO: sort probabilities
+        pass
     return df
 
 def display_results(df):
@@ -35,6 +39,8 @@ def display_results(df):
             # image = plt.imread(ordered_imgs[k])
             plt.imshow(image, interpolation="nearest")
             if type(ordered_distances[k]) is str:
+                plt.title(str(ordered_distances[k]))
+            elif type(ordered_distances[k]) is list:
                 plt.title(str(ordered_distances[k]))
             else:
                 try:
