@@ -8,6 +8,21 @@ def parse_format(row, prompt_format):
     text = None
     formatting = None
 
+    data = {
+        "author":row.AUTHOR,
+        # BORN-DIED
+        "bd": row._2,
+        "year":{
+            "timeframe": row.TIMEFRAME,
+            "date": row.DATE,
+        },
+        "technique": row.TECHNIQUE,
+        "location": row.LOCATION,
+        "form": row.FORM,
+        "type": row.TYPE,
+        "school": row.SCHOOL
+    }
+
     # check if custom flag is specified correctly
     custom_count = prompt_format.count(custom_flag)
     specified_count = prompt_format.count(f"{custom_flag}_")
@@ -41,28 +56,21 @@ def parse_format(row, prompt_format):
 
         # valid_columns = ["author", "bd", "year", "technique", "location", "form", "type", "school"]
         if col == "author":
-            text, formatting = get_author_format(fix, row.AUTHOR)
+            text, formatting = get_author_format(fix, data["author"])
         elif col == "bd":
-            # BORN-DIED
-            text, formatting = get_bd_format(fix, row._2)
+            text, formatting = get_bd_format(fix, data["bd"])
         elif col == "year":
-            # TODO: to edit formats.py > get_year_formats()
-            # and grammar.py > valid_columns
-            years = {
-                "timeframe": row.TIMEFRAME,
-                "date": row.DATE
-            }
-            text, formatting = get_year_format(fix, years)
+            text, formatting = get_year_format(fix, data["year"])
         elif col == "technique":
-            text, formatting = get_technique_format(fix, row.TECHNIQUE)
+            text, formatting = get_technique_format(fix, data["technique"])
         elif col == "location":
-            text, formatting = get_location_format(fix, row.LOCATION)
+            text, formatting = get_location_format(fix, data["location"])
         elif col == "form":
-            text, formatting = get_form_format(fix, row.FORM)
+            text, formatting = get_form_format(fix, data["form"])
         elif col == "type":
-            text, formatting = get_type_format(fix, row.TYPE)
+            text, formatting = get_type_format(fix, data["type"])
         elif col == "school":
-            text, formatting = get_school_format(fix, row.SCHOOL)
+            text, formatting = get_school_format(fix, data["school"])
         elif col == custom_flag:
             if custom_random and not fix is None:
                 raise Exception("if you would like to randomize strings from specific lists try change_axis == True")
