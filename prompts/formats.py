@@ -277,9 +277,9 @@ def get_prompt_format(wo_replace=False):
     # randomize if to use `extra` stuff in grammar or no
     # k = random.randint(0, len(extra))
     if wo_replace:
-        selected_format = format_sampler(valid_grammar)
-    else:
         selected_format = format_indexer(valid_grammar, wo_replace)
+    else:
+        selected_format = format_sampler(valid_grammar)
     if "any_" in selected_format:
         # valid_columns is in grammar.py
         selected_format = selected_format.replace("any_", f"{format_sampler(valid_columns)}_")
