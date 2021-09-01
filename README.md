@@ -32,7 +32,7 @@ Restores latents and resets optimizer.
 ```bash
 $ dream 'a latent space' --latents_filename latent.pkl
 ```
-Looks for `previous.backup` in `latents` wherever the command is invoked.
+Looks for `latent.pkl` in `latents` wherever the command is invoked.
 You can specify the parent directory with `--save_dir`.
 
 
@@ -49,7 +49,7 @@ slurm script [here](https://gist.github.com/yuenhy/068ac13ae872b76d7d15b6bbde96c
 # distance functions
 measure distance between the original image and the generated image
 
-## score_by_color(original_imgs, generated_imgs, method="correlation)
+## score_by_color(original_imgs, generated_imgs, method="correlation")
 
 * **original_imgs**: list that contains filepaths to images 
 * **generated_imgs**: list that contains filepaths to images 
@@ -85,7 +85,7 @@ returns list of distances
 change layers in `distance/vgg.py`,
 change distance function in `distance/neural_style.py`
 
-## TODO: score_by_clip(original_imgs, generated_imgs, prompts, original_encodings)
+## score_by_clip(original_imgs, generated_imgs, prompts, original_encodings)
 
 * **original_imgs**: list that contains filepaths to images 
 * **generated_imgs**: list that contains filepaths to images 
@@ -165,6 +165,9 @@ def get_author_format(fix, data):
 if prompt_format = ["author_pf"]
 then prompt = ["in_style_of_author]
 
+to change how valid_grammar is being used -> get_prompt_format()
+call to function is in generator.py -> get_prompt_ref_list()
+
 ```
 
 ## generator.py
@@ -172,16 +175,19 @@ then prompt = ["in_style_of_author]
 parser here
 
 ### prompt_reference_list.csv
-[REF_ID](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L115)
-[PROMPT](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L76) 
-[PROMPT_FORMAT](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L77)
-[START_LATENT](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L100)
-[GENERATED_IMG](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L101)
-[REFERENCE_IMG](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L97)
+REF_ID prompts/generator.py -> make_prompts()
+PROMPT prompts/generator.py -> parse_format()
+PROMPT_FORMAT prompts/generator.py -> parse_format()
+START_LATENT prompts/generator.py -> get_prompt_reference_list()
+GENERATED_IMG `prompts/generator.py` -> get_prompt_reference_list()
+REFERENCE_IMG `prompts/generator.py` -> get_prompt_reference_list()
 
 ### make_prompts(csv, filename=None, aw=50, pp=5, runs=5)
 for `aw` artworks, make `pp` prompts; each prompt will run `runs` times\
-for 50 artworks, make 5 prompts; each prompt will run 5 times  
+for 50 artworks, make 5 prompts; each prompt will run 5 times 
+
+### parse_format(row, prompt_format)
+change `data` [dict](https://github.com/yuenhy/stapler/blob/main/prompts/generator.py#L11) as per  input data
 
 #### manually specify artist to sample from
 ```
@@ -196,7 +202,7 @@ then sample at most 10 artworks from RAFFAELLO Sanzio and MICHELANGELO Buonarrot
 
 # artist_*.csv
 ## artist_mid.csv
-instead of [`q=raphael`](https://trends.google.com/trends/explore?date=2004-01-01%202021-08-28&q=raphael), specify [`q=/m/0c43g`](https://trends.google.com/trends/explore?date=2004-01-01%202021-08-28&q=%2Fm%2F0c43g) to get italian painter instead of `q=/m/01s712` archangel
+instead of [`q=raphael`](https://trends.google.com/trends/explore?date=2004-01-01%202021-08-28&q=raphael), specify [`q=/m/0c43g`](https://trends.google.com/trends/explore?date=2004-01-01%202021-08-28&q=%2Fm%2F0c43g) to get italian painter instead of a certain tmnt
 
 
 [pytrends](https://github.com/GeneralMills/pytrends) unoffical api for google trends
@@ -216,25 +222,26 @@ to note:\
 291,William Hogarth,1.877850906458435e-06,william-hogarth\
 292,William Merritt Chase,3.4047360178324484e-05,william-merritt-chase\
 293,William Turner,3.4047360178324484e-05,william-merritt-chase\
-294,William-Adolphe Bouguereau,5.6879872040769384e-05,william-adolphe-bouguereau
+294,William-Adolphe Bouguereau,5.6879872040769384e-05,william-adolphe-bouguereau\
 
 78,Francisco Goya,3.6826480416291795e-07,francisco-goya\
-79,Francisco de Zurbaran,2.187341925721274e-06,francisco-de-zurbaran
+79,Francisco de Zurbaran,2.187341925721274e-06,francisco-de-zurbaran\
 
-116,Henri Fantin-Latour,6.9500538471472556e-06,henri-fantin-latour
-117,Henri Martin,2.4208597507560395e-06,henri-martin
-118,Henri Matisse,1.3240138855773038e-06,henri-matisse
-119,Henri Rousseau,9.298228086131178e-08,henri-rousseau
-120,Henri de Toulouse-Lautrec,3.7809406990356357e-07,henri-de-toulouse-lautrec
-121,Henri-Edmond Cross,5.426108356080219e-06,henri-edmond-cross
+116,Henri Fantin-Latour,6.9500538471472556e-06,henri-fantin-latour\
+117,Henri Martin,2.4208597507560395e-06,henri-martin\
+118,Henri Matisse,1.3240138855773038e-06,henri-matisse\
+119,Henri Rousseau,9.298228086131178e-08,henri-rousseau\
+120,Henri de Toulouse-Lautrec,3.7809406990356357e-07,henri-de-toulouse-lautrec\
+121,Henri-Edmond Cross,5.426108356080219e-06,henri-edmond-cross\
 
-235,Pierre Bonnard,3.958794223744976e-07,pierre-bonnard
-236,Pierre Puvis de Chavannes,1.2302851597756347e-07,pierre-puvis-de-chavannes
-237,Pierre-Auguste Renoir,1.8887064068530248e-06,pierre-auguste-renoir
-238,Pierre-Paul Prud'hon,5.879820923614441e-07,pierre-paul-prud-hon
+235,Pierre Bonnard,3.958794223744976e-07,pierre-bonnard\
+236,Pierre Puvis de Chavannes,1.2302851597756347e-07,pierre-puvis-de-chavannes\
+237,Pierre-Auguste Renoir,1.8887064068530248e-06,pierre-auguste-renoir\
+238,Pierre-Paul Prud'hon,5.879820923614441e-07,pierre-paul-prud-hon\
 
 # requirements.txt
-probably has more than required 
+probably has more than required\
+[pip-check-reqs](https://github.com/r1chardj0n3s/pip-check-reqs) might help
 ```
 $ git clone https://github.com/yuenhy/stapler.git
 $ cd stapler
