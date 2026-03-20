@@ -18,9 +18,9 @@ valid_grammar = [
     "school_nf-type_nf-form_nf-author_pf", # german mythological painting by zwirner
     "school_nf-type_nf-form_nf-author_pf-year_af", # german mythological painting by zwirner (1839)
     "school_nf-type_nf-form_nf-author_pf-year_af-bd_nf", # german mythological painting by zwirner (b. 1802, Jakobswalde, d. 1861, Köln)
-    # # "any_nf", # any one 
-    # "school_nf-cusz_color-type_nf-form_nf-author_pf-year_af-cusz_type", 
-    "cusz_0-year_nf-form_nf-cusz_0" # a photo of a 1700 painting in 8K ULTRA HD 
+    # # "any_nf", # any one
+    # "school_nf-var_color-type_nf-form_nf-author_pf-year_af-var_type",
+    "var_0-year_nf-form_nf-var_0" # a photo of a 1700 painting in 8K ULTRA HD
 ]
 
 # extra stuff to possibly attach to valid grammar
@@ -34,8 +34,8 @@ extra = ["year_af", "location_pf"]
 
 #########################################
 # check custom_strings.py for examples
-custom_flag = "cusz"
-# use cus_x when writing valid grammar to specify a list
+custom_flag = "var"
+# use var_x when writing valid grammar to specify a list
 
 # check custom_strings.py for examples
 change_axis = False
