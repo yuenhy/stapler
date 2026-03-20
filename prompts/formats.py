@@ -31,15 +31,15 @@ def get_custom_format(counter, f, data, prompt_format):
             # randomized data
             text = get_custom_horizontal(counter, data)
         else:
-            # get list from grammar.py
-            custom = eval(f)
+            # look up list by name from custom_strings dict
+            custom = custom_strings[f]
             if change_axis:
                 text = get_custom_vertical(custom)
             else:
                 text = get_custom_horizontal(counter, custom)
                 if text is None:
                     raise Exception(f"{f} has {len(custom)} value(s) but you specified at least {counter+1} flags in {prompt_format}")
-    except NameError as e:
+    except KeyError:
         raise Exception(f"{f} not in custom_strings.py")
     
     formatting = f

@@ -1,58 +1,60 @@
 from .grammar import custom_flag
-#####################################################################
-# horizontal fill
-# change_axis == False
-#
-# "cusz_0-year_nf-form_nf-cusz_0" will check for cus_0, and greedily inject from cus_0
-# a photo of a 1700 painting in 8K ULTRA HD
-#
-# `cusz` without additional specification
-#
-# "cusz-year_nf-form_nf" will check for any cus_x, where len(cus_x) == number of custom flags found in format
-# format.count(custom_flag) == 1, so cus_1a OR cus_1b 
-# a zipped file of a 1700 painting OR the non-compressed version of a 1700 painting
-# 
-#####################################################################
-# vertical fill
-# change_axis == True
-#
-# "year_nf-cus_colors-form_nf-cus_types" will sample and inject from cus_colors and cus_4 accordingly
-# 1700 blue painting BDR
-#
-# `cusz` not allowed
-#####################################################################
-
-# avoid using <custom_flag> in list name
-# should follow <custom_flag>_listOfStrings 
-cusz_0 = ["a photo of a", "in 8K ULTRA HD"]
-cusz_1a = ["a zipped file of a"]
-cusz_1b = ["the non-compressed version of a"]
-cusz_color = ["red", "blue"]
-cusz_type = ["BDR", "WEB-DL", "CAM-Rip"]
-
-
 
 #####################################################################
-custom_all_strings = {} # if renaming, update generator.py > parse_format() as well
-for name in dir():
-    if not name.startswith('__'):
-        actual = eval(name)
-        if type(actual) is list:
-            if name == custom_flag:
-                raise Exception("list name == custom flag not allowed")
-            elif not "_" in name:
-                raise Exception(f"{name} not allowed, please follow list naming convention")
-            elif not f"{custom_flag}_" in name:
-                raise Exception(f"{name} not allowed, please start list name with `{custom_flag}_`")
-            elif name.count("_") > 1:
-                raise Exception(f"{name} not allowed, use camelCase instead")
-            elif name.count(custom_flag) > 1:
-                raise Exception(f"{name} not allowed, avoid using flag in list name")
-            length = len(actual)
-            if length == 0:
-                raise Exception(f"{name} is empty")
-            if length in custom_all_strings:
-                custom_all_strings[length].append(actual)
-            else:
-                custom_all_strings[length] = [actual]
+# Add custom string lists to the dict below.
+# Each key must follow the pattern  <custom_flag>_listName  (e.g. "var_0").
+# Use camelCase for multi-word names: "var_myList", not "var_my_list".
+#
+# horizontal fill  (change_axis = False in grammar.py)
+#
+#   "var_0-year_nf-form_nf-var_0"
+#   → greedily pulls from var_0 by position
+#   → "a photo of a 1700 painting in 8K ULTRA HD"
+#
+#   "var-year_nf-form_nf"
+#   → picks any list whose length equals the number of var tokens (1 here)
+#   → "a zipped file of a 1700 painting"  OR
+#      "the non-compressed version of a 1700 painting"
+#
+# vertical fill  (change_axis = True in grammar.py)
+#
+#   "year_nf-var_color-form_nf-var_type"
+#   → samples one entry from each named list independently
+#   → "1700 blue painting BDR"
+#   (unsubscripted `var` is not allowed in vertical mode)
+#####################################################################
 
+custom_strings: dict[str, list[str]] = {
+    "var_0":     ["a photo of a", "in 8K ULTRA HD"],
+    "var_1a":    ["a zipped file of a"],
+    "var_1b":    ["the non-compressed version of a"],
+    "var_color": ["red", "blue"],
+    "var_type":  ["BDR", "WEB-DL", "CAM-Rip"],
+}
+
+#####################################################################
+# Validation — checked once at import time.
+#####################################################################
+for _name, _strings in custom_strings.items():
+    if _name == custom_flag:
+        raise ValueError(f"list name cannot equal the custom flag '{custom_flag}'")
+    if "_" not in _name:
+        raise ValueError(f"'{_name}' must follow naming convention: {custom_flag}_listName")
+    if not _name.startswith(f"{custom_flag}_"):
+        raise ValueError(f"'{_name}' must start with '{custom_flag}_'")
+    if _name.count("_") > 1:
+        raise ValueError(f"'{_name}' has too many underscores — use camelCase after the prefix (e.g. {custom_flag}_myList)")
+    if _name.count(custom_flag) > 1:
+        raise ValueError(f"'{_name}' — avoid repeating the flag in the list name")
+    if len(_strings) == 0:
+        raise ValueError(f"'{_name}' is empty")
+
+#####################################################################
+# Build the count-indexed lookup used by generator.py when the
+# prompt format contains an unsubscripted var token.
+# Maps  list_length → [list, list, ...]  so the caller can pick any
+# list whose length matches the number of var slots in the format.
+#####################################################################
+custom_all_strings: dict[int, list[list[str]]] = {}
+for _strings in custom_strings.values():
+    custom_all_strings.setdefault(len(_strings), []).append(_strings)

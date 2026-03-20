@@ -117,34 +117,42 @@ if you end up using custom strings, you might want `no_extra` words/ formatting,
 change word formatting in formats.py
 
 ### custom flag
-default `custom_flag = cusz`
+default `custom_flag = var`
 
 change flag in grammar.py
 
 ### horizontal fill
 if horizontal fill, `change_axis = False`
 ```
-cusz_0 = ["foo", "baz"]
-if prompt_format = "cusz_0-bar-cusz_0"
-then prompt = ["foo", "bar", "baz"]
+if prompt_format = "var_0-bar-var_0"
+then prompt = ["foo", "bar", "baz"]   # pulls from var_0 = ["foo", "baz"] by position
 ```
 change axis in grammar.py
 
 ### vertical fill
 if vertical fill, `change_axis = True`
 ```
-cusz_colors = ["red", "blue"]
-cusz_animal = ["zebra", "horse"]
-if prompt_format = "cusz_colors-cusz_animal"
-then prompt = ["red", "horse"]
+if prompt_format = "var_color-var_animal"
+then prompt = ["red", "horse"]        # samples independently from each named list
 ```
 change axis in grammar.py
 
 ## custom_strings.py
-declare custom strings here
+declare custom strings in the `custom_strings` dict:
+```python
+custom_strings = {
+    "var_0":     ["foo", "baz"],
+    "var_color": ["red", "blue"],
+}
 ```
-<custom_flag>_listOfStrings = ["foo", "bar"]
-```
+
+naming rules (validated at import time):
+* keys must start with `<custom_flag>_` (default: `var_`)
+* only one underscore — use camelCase for multi-word names: `var_myList`
+* values must be non-empty lists
+
+the file also exports `custom_all_strings` — a count-indexed view of the same data used
+internally by `generator.py` to match unsubscripted `cusz` tokens to lists of the right length.
 
 ## formats.py
 unfortunately not a class 
